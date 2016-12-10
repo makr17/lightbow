@@ -15,7 +15,7 @@ struct Params { sleep: Duration }
 struct Zone  { head: u8, body: u8, tail: u8, name: String }
 
 fn build_params () -> Params {
-    let mut params = Params { sleep: Duration::new(1, 0) };
+    let mut params = Params { sleep: Duration::new(0, 200_000_000) };
 
     // parse command line args and adjust params accordingly
     let args: Vec<String> = env::args().collect();
@@ -107,8 +107,8 @@ fn main() {
     let dmx = DmxSource::new("Controller").unwrap();
 
     let zones: [Zone; 6] = [
-        Zone { head: 3, body: 47, tail: 0, name: "10".to_string() },
-        Zone { head: 2, body: 92, tail: 2, name: "11a".to_string() },
+        Zone { head: 0, body: 44, tail: 3, name: "10".to_string() },
+        Zone { head: 2, body: 91, tail: 3, name: "11a".to_string() },
         Zone { head: 2, body: 92, tail: 2, name: "11b".to_string() },
         Zone { head: 2, body: 90, tail: 3, name: "12a".to_string() },
         Zone { head: 2, body: 91, tail: 3, name: "12b".to_string() },
