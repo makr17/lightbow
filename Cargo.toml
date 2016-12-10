@@ -1,0 +1,7 @@
+[package]
+name = "lightbow"
+version = "0.1.0"
+authors = ["makr17 <bracher@gmail.com>"]
+
+[dependencies]
+sacn = "0.1.1"
