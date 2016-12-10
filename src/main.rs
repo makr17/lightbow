@@ -1,6 +1,9 @@
+use std::env;
 use std::thread::sleep;
 use std::time::Duration;
 
+extern crate getopts;
+use getopts::Options;
 extern crate sacn;
 use sacn::DmxSource;
 
@@ -8,7 +11,33 @@ const MAX_BRIGHTNESS: u8 = 75;
 const PIXEL_SIZE: usize = 3;
 const UNIVERSE_SIZE: usize = 510;
 
+struct Params { sleep: Duration }
 struct Zone  { head: u8, body: u8, tail: u8, name: String }
+
+fn build_params () -> Params {
+    let mut params = Params { sleep: Duration::new(1, 0) };
+
+    // parse command line args and adjust params accordingly
+    let args: Vec<String> = env::args().collect();
+    let program = args[0].clone();
+    let mut opts = Options::new();
+    opts.optopt("s", "sleep", "sleep interval in seconds, default 1.5", "SECONDS");
+    let matches = match opts.parse(&args[1..]) {
+        Ok(m) => { m }
+        Err(f) => { panic!(f.to_string()) }
+    };
+
+        if matches.opt_present("s") {
+        // take float seconds
+        // convert to int seconds and nanoseconds to make Duration happy
+        let seconds: f32 = matches.opt_str("s").unwrap().parse::<f32>().unwrap();
+        let whole_seconds: u64 = seconds as u64;
+        let nano_seconds: u32 = ((seconds - whole_seconds as f32) * 1_000_000_000_f32) as u32;
+        params.sleep = Duration::new(whole_seconds, nano_seconds);
+    }
+
+    return params;
+}
 
 fn build_rainbow (zones: &[Zone]) -> Vec<u8> {
     let mut live: u16 = 0;
@@ -73,6 +102,8 @@ fn build_rainbow (zones: &[Zone]) -> Vec<u8> {
 }
 
 fn main() {
+    let params = build_params();
+
     let dmx = DmxSource::new("Controller").unwrap();
 
     let zones: [Zone; 6] = [
@@ -84,9 +115,7 @@ fn main() {
         Zone { head: 2, body: 43, tail: 0, name: "13".to_string() }
     ];
 
-    let mut lights  = build_rainbow(&zones);
-    // println!("{:?}", lights);
-    let refresh = Duration::new(1, 500_000_000);
+    let mut lights = build_rainbow(&zones);
     loop {
         render(&lights, &zones, &dmx);
         // take last three elements and move to front of vector
@@ -94,7 +123,7 @@ fn main() {
             let pix: u8 = lights.pop().unwrap();
             lights.insert(0, pix);
         }
-        sleep(refresh);
+        sleep(params.sleep);
     }
     dmx.terminate_stream(1);
 }

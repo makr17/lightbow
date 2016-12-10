@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = ["makr17 <bracher@gmail.com>"]
 
 [dependencies]
+getopts = "0.2"
 sacn = "0.1.1"
