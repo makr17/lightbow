@@ -11,7 +11,10 @@ const UNIVERSE_SIZE: usize = 510;
 struct Zone  { head: u8, body: u8, tail: u8, name: String }
 
 fn build_rainbow (zones: &[Zone]) -> Vec<u8> {
-    let live: u16 = zones.iter().map(|x| (x.body as u16)).sum();
+    let mut live: u16 = 0;
+    for zone in zones {
+        live += zone.body as u16;
+    }
     let float_per_trans: f32 = (MAX_BRIGHTNESS as f32)/((live as f32)/6_f32);
     let per_trans = float_per_trans.round() as u8;
     let mut lights: Vec<u8> = vec![];
