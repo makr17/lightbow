@@ -1,8 +1,8 @@
 [package]
 name = "lightbow"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["makr17 <bracher@gmail.com>"]
 
 [dependencies]
 getopts = "0.2"
-sacn = "0.1.1"
+houselights = { git = "https://github.com/makr17/houselights.git" }
