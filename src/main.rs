@@ -7,7 +7,7 @@ use getopts::Options;
 extern crate houselights;
 use houselights::houselights::{RGB,Zone,Dmx,render};
 
-const MAX_BRIGHTNESS: u8 = 255;
+const MAX_BRIGHTNESS: i16 = 210;
 
 struct Params { sleep: Duration }
 
@@ -41,45 +41,63 @@ fn build_rainbow (zones: &[Zone]) -> Vec<RGB> {
         live += zone.body as u16;
     }
     let float_per_trans: f32 = 255_f32/((live as f32)/6_f32);
-    let per_trans = float_per_trans.round() as u8;
+    let per_trans = float_per_trans.round() as i16;
     let mut lights: Vec<RGB> = vec![];
-    let mut red: u8 = MAX_BRIGHTNESS;
-    let mut green: u8 = 0;
-    let mut blue: u8 = 0;
+    let mut red: i16 = MAX_BRIGHTNESS;
+    let mut green: i16 = 0;
+    let mut blue: i16 = 0;
     // red at max, ramp up green
     for _x in 0..live/6 {
-        lights.push(RGB { red: red, green: green, blue: blue });
+        lights.push(RGB { red: red as u8, green: green as u8, blue: blue as u8 });
         green += per_trans;
+        if green > MAX_BRIGHTNESS {
+            green = MAX_BRIGHTNESS;
+        }
     }
     green = MAX_BRIGHTNESS; // in case of rounding errors...
     // green at max, ramp down red
     for _x in 0..live/6 {
-        lights.push(RGB { red: red, green: green, blue: blue });
+        lights.push(RGB { red: red as u8, green: green as u8, blue: blue as u8 });
         red -= per_trans;
+        if red < 0 {
+            red = 0;
+        }
     }
     red = 0; // rounding errors
     // green at max, ramp up blue
     for _x in 0..live/6 {
-        lights.push(RGB { red: red, green: green, blue: blue });
+        lights.push(RGB { red: red as u8, green: green as u8, blue: blue as u8 });
         blue += per_trans;
+        if blue > MAX_BRIGHTNESS {
+            blue = MAX_BRIGHTNESS;
+        }
     }
     blue = MAX_BRIGHTNESS; // rounding errors
     // blue at max, ramp down green
     for _x in 0..live/6 {
-        lights.push(RGB { red: red, green: green, blue: blue });
+        lights.push(RGB { red: red as u8, green: green as u8, blue: blue as u8 });
         green -= per_trans;
+        if green < 0 {
+            green = 0;
+        }
     }
     green = 0;  // rounding errors
     // blue at max, ramp up red
     for _x in 0..live/6 {
-        lights.push(RGB { red: red, green: green, blue: blue });
+        lights.push(RGB { red: red as u8, green: green as u8, blue: blue as u8 });
         red += per_trans;
+        if red > MAX_BRIGHTNESS {
+            red = MAX_BRIGHTNESS;
+        }
     }
     red = MAX_BRIGHTNESS; // rounding errors
     // red at max, ramp down blue
     for _x in 0..live/6 {
-        lights.push(RGB { red: red, green: green, blue: blue });
+        lights.push(RGB { red: red as u8, green: green as u8, blue: blue as u8 });
         blue -= per_trans;
+        if blue < 0 {
+            blue = 0;
+        }
     }
 
     return lights;
