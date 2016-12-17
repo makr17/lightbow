@@ -17,7 +17,7 @@ fn build_params () -> Params {
     // parse command line args and adjust params accordingly
     let args: Vec<String> = env::args().collect();
     let mut opts = Options::new();
-    opts.optopt("s", "sleep", "sleep interval in seconds, default 1.5", "SECONDS");
+    opts.optopt("s", "sleep", "sleep interval in seconds, default 0.5", "SECONDS");
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
