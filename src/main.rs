@@ -7,7 +7,7 @@ use getopts::Options;
 extern crate houselights;
 use houselights::houselights::{RGB,Zone,Dmx,render};
 
-const MAX_BRIGHTNESS: i16 = 210;
+const MAX_BRIGHTNESS: i16 = 150;
 
 struct Params { sleep: Duration }
 
